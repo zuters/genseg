@@ -1,3 +1,4 @@
+
 # GENSEG Segmenter
 
 This repository contains Python 3 text segmentation scripts for machine translation.
@@ -5,186 +6,141 @@ This repository contains Python 3 text segmentation scripts for machine translat
 ## The main principles
 
   - Performs close-to-morphological segmentation
-  - For the present, tuned for English and Latvian languages
-  - Requires minor adaptation for using in other languages:
-  -- small source code changes
-  -- tuning of hyperparameters
+  - Has two sub-tools:
+  -- generic segmenter (for any language)
+  -- Latvian-specific segmenter (performs Latvian morphological analysis for better results)
   - to support open-vocabulary (in machine translation), segmented texts should be post-processed (e.g., using [BPE])
 
 ## Usage instructions
 
-PRPE is used in the following way:
-  - Learning phase (files of potential segments produced): learn_prpe.py
-  - Segmentation phase (using produced files of the previous phase): apply_prpe.py
-  - Removing segmentation: unprocess_prpe.py
+GENSEG is used in the following way:
+  - Learning phase (files of potential segments produced): [learn_genseg.py], [learn_lvseg.py]
+  - Segmentation phase (using produced file of the previous phase): [apply_genseg.py], [apply_lvseg.py]
+  - Removing segmentation: [unprocess_seg.py]
 
-### Phase #1. Learning ([learn_prpe.py])
+### Phase #1. Learning ([learn_genseg.py], [learn_lvseg.py])
 
-During this phase several 'code' files are produced from the {corpus} representing building blocks for the segmentation:
-  - {prefixes}
-  - {roots}
-  - {suffixes}
-  - {postfixes} (in the lastest version this particular file is redundant for segmentation but is left as legacy and for the purpose to potentially assist in hyperparamter adaptation)
-  - {endings}
-  - vocabulary of most frequent {words} to avoid segmentation
+During this phase, segmentation vocabulary {svoc} produced from the {corpus}. Segmentation vocabulary contains information about words how they should be segmented into three parts (generic segmenter): [prefix] root [postfix], or two parts (Latvian segmenter): root [postfix].
 
-**Terminology of word parts in the context of this program**
-
-Word "unbelievables" consists of:
- * prefix: **un**
- * root: **believ**
- * postfix: **ables**
-
-where postfix "ables" consists of:
- * suffix: **abl**
- * ending: **es**
-
-
-**Running the learning script**:
+**Running the generic learning script**:
 
 ```sh
-prpe6/learn_prpe.py -i {corpus} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -a {prefix rate} -b {suffix rate} -c {postfix rate} -v {vocabulary size} -l {language}
+learn_genseg.py -i {corpus} -o {svoc}
 ```
 
-***where***:
-  - prefix rate: how many prefixes to collect (greater than 1 means exact number, less means percentage)
-  - suffix rate: how many suffixes to collect (greater than 1 means exact number, less means percentage)
-  - postfix rate: how many postfixes to collect (greater than 1 means exact number, less means percentage) (in the latest version this particular parameter is redundant)
-  - vocabulary size: how many the most frequent words to store to avoid segmentations for them (in order to reduce number of segments)
-  - language: for the present, only 'lv' and 'en' are acceptable; otherwise 'en' scripts will be run
-
-All the rates (prefix, suffix, postfix, vocabulary) should be experimentally tuned. Fitness conditions for roots and endings (not represented in parameters) are hardcoded.
-
-**Sample configuration** used for **Latvian** (see produced files in 'codefiles-lv' directory):
-```sh
-prpe6/learn_prpe.py -i corpus.lv -p prefixes.lv -r roots.lv -s suffixes.lv -t postfixes.lv -u endings.lv -w words.lv -a 32 -b 1000 -c 0.1 -v 5000 -l lv
-```
-
-**Sample configuration** used for **English** (see produced files in 'codefiles-en' directory):
-```sh
-prpe6/learn_prpe.py -i corpus.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -a 32 -b 200 -c 180 -v 5000 -l en
-```
-
-Just for a brief insight; the first 10 English prefixes collected in the learning phase (in file {prefixes}):
- * re 1
- * un 2
- * de 3
- * in 4
- * dis 5
- * mis 6
- * sub 7
- * over 8
- * ac 9
- * im 10
-
-
-### Phase #2. Segmentation ([apply_prpe.py])
-
-During this phase, input text is segmented using 'code' files produced in the learning phase.
-
-**Running the segmentation script**:
+**Running the Latvian learning script**:
 
 ```sh
-prpe6/apply_prpe.py -i {input text} -o {output text} -p {prefixes} -r {roots} -s {suffixes} -t {postfixes} -u {endings} -w {words} -l {language} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
+learn_lvseg.py -i {corpus} -o {svoc}
 ```
 
-***where***:
-  - prefixes, roots, suffixes, postfixes, endings: files produced in the learning phase
-  - language: for the present, only 'lv' and 'en' are acceptable
-  - segmentation mode -- to determine segmentation optimization, processing words with uppercase and usage of segmentation markers (see below)
-  - segmentation marker -- a character or sequence of character to mark segments to constitute words (if sequence of digits, then is converted to the character represented by that number, default '9474')
-  - upercase marker -- a character or sequence of character to mark next word as starting with uppercase (if sequence of digits, then is converted to the character represented by that number, default '9553')
+**Additional optional parameters for the learning script**:
+  - mode: 0-segmentation vocabulary produced (default), 1-extended segmentation vocabulary produced (just for analysis) - several segmentation variants for each word with validity rates
+  - prefignore (generic segmentation only): generic segmenter is bad at splitting prefixes correctly, so this paramter is 1 by default
+  - several parameters for the generic learning script: rootextent, minroot, maxroot, rootlencoef, maxprefix, prerate, maxpostfix, postrate, prepenalty (described in [learn_genseg.py]).
 
-##### Segmentation mode
+Just for a brief insight 1, small excerpt of English segmentation vocabulary (in file {svoc}):
+abducted abduct ed
+abductee abduct ee
+abductees abduct ees
+abducting abduct ing
+abduction abduct ion
+abductions abduct ions
+abductor abduct or
+abductors abduct ors
+abilities abilit ies
+ability abilit y
 
-Segmentation mode is a positive integer number up to 4 digits in the form ABCC, where
-  - A: optimization mode
-  - B: uppercase mode
-  - CC: marking mode
+Just for a brief insight 2, small excerpt of Latvian segmentation vocabulary (in file {svoc}), '@' indicates prefix:
+pats pat s
+patur @pa tur
+paturot @pa tur ot
+paturēt @pa tur ēt
+patvērumu patvērumu
+patānī patānī
+patēriņa @pa tēr iņa
+patēriņu @pa tēr iņu
+patērētiem @pa tēr ētiem
+patērētāji @pa tēr ētāji
+patīk patīk
+patīkamas patīkam as
+patīkami patīkam i
 
-In the next examples the text *"Unbelievable salespersons"* will be used, "/" -- segmentation marker, "|" -- uppercase marker.
+Just for a brief insight 3, small excerpt of Russian segmentation vocabulary (in file {svoc}):
+канцерогенные канцероген ные
+канцерогенных канцероген ных
+канцерогенов канцероген ов
+канцлер канцлер
+канцлера канцлер а
+канцлере канцлер е
+канцлеров канцлер ов
+канцлером канцлер ом
 
-**A: Optimization mode**
-Optimization mode is intended to reduce number of segments, thus the length of sequence of segments.
+Just for a brief insight 4, small excerpt of German segmentation vocabulary (in file {svoc}):
+logistisch logistisch
+logistische logistisch e
+logistischen logistisch en
+logistischer logistisch er
+logistisches logistisch es
+lokalisieren lokalisier en
+lokalisiert lokalisier t
+lokalisierte lokalisier te
+lokalisierten lokalisier ten
+lokalisierter lokalisier ter
+lokalisiertes lokalisier tes
+lokalisierung lokalisier ung
 
-Value 0 -- no optimization:
-*Un/ believ/ able sal/ es/ person/ s*
 
-Value 1 -- small optimization:
-*Un/ believ/ able sales/ persons*
+### 2. Segmentation ([apply_genseg.py], [apply_lvseg.py])
 
-Value 2 -- full optimization:
-*Unbeliev/ able sales/ person/ s*
+During this phase, {input text} is segmented using segmentation vocabulary {svoc} produced in the learning phase.
 
-**B: Uppercase mode**
-Uppercase mode converts word starting with uppercase and the rest symbols in lowercase to lowercase with putting uppercase marker before it:
+**Running the generic segmentation script**:
 
-Value 0 -- uppercase processing ON:
-*| unbeliev/ able sales/ person/ s*
-
-Value 1 -- uppercase processing OFF:
-*Unbeliev/ able sales/ person/ s*
-
-**C: Marking mode**
-Although there are modes 0, 1, 2, 3 available, we suggest using mode 3 (marker indicates that the next segment is of the same word)
-
-Examples of valid segmentation modes: 3, 103, 2103, 1003
-
-**Sample configuration** of segmentation used for **English** (paramaters for markers omitted):
 ```sh
-prpe6/apply_prpe.py -i input.en -o output.en -p prefixes.en -r roots.en -s suffixes.en -t postfixes.en -u endings.en -w words.en -l en -d 2103
+apply_genseg.py -i {input text} -j {svoc} -o {output text}
 ```
 
-### 3. Removing segmentation ([unprocess_prpe.py])
-
-During this operation, a segmented text is coverted back to a normal text:
+**Running the Latvian segmentation script**:
 
 ```sh
-prpe6/unprocess_prpe.py -i {input text} -o {output text} -d {segmentation mode} -m {segmentation marker} -n {uppercase marker}
+apply_lvseg.py -i {input text} -j {svoc} -o {output text}
 ```
 
-For example:
+**Additional optional parameters for the segmentation script**:
+
+  - mode - extent of segmentation, 0-segmented according the segmentation vocabulary, 1 (default) - prefixes not segmented or almost not segmented even if they are in the segmentation vocabulary
+  - segmentation marker (marker1) -- a character or sequence of character to mark segments to constitute words (if sequence of digits, then is converted to the character represented by that number, default '9474')
+  - uppercase marker (marker2) -- a character or sequence of character to mark next word as starting with uppercase (if sequence of digits, then is converted to the character represented by that number, default '9553')
+
+##### Example of segmentation
+
+if segmentation mark is '@', uppercase mark is '$', and word 'accounting' is segmented in dictionary as ac-count-ing, the word 'Accounting' will appear in the final text the following way:
+  - $ ac@ count @ing (if mode  = 0)
+  - $ account @ing (if mode = 1)
+
+
+### 3. Removing segmentation ([unprocess_seg.py])
+
+During this operation, a segmented text is converted back to a normal text:
+
 ```sh
-prpe6/unprocess_prpe.py -i input.en -o output.en -d 2103 -m / -n |
+unprocess_prpe.py -i {input text} -o {output text}
 ```
-will convert text
-*"| un/ believ/ able sales/ persons"*
-back into
-*"Unbelievable salespersons"*
 
-### 4. Summary of the best configurations for NMT discovered by far
+**Additional optional parameters for removing segmentation (only if specified in the segmentation phase)**:
 
-**English:**
- - Prefix rate a = 32
- - Suffix rate b = 200
- - Vocabulary size v = 5000 (or less if NMT system not sensitive to long sequences)
- - Segmentation mode d = 2003
+  - segmentation marker (marker1)
+  - uppercase marker (marker2)
 
-**Latvian:**
- - Prefix rate a = 32
- - Suffix rate b = 1000
- - Vocabulary size v = 5000 (or less if NMT system not sensitive to long sequences)
- - Segmentation mode d = 2003
-
-### 5. Adaptation to other languages
-
-To make the adaptation, it is unfortunately required that you have some understanding about the language.
-
-A brief activity list for adaptation:
-  - in [prpe.py], add the language specific information to the function "add_heuristics" which can eventually cause creation of several language specific function (such as "is_good_root")
-  - run learning phase with looser hyperparameters for code files, i.e., "-a 1000 -b 0.1 -c 0.1"
-  - go through the code files (prefixes, postfixes, suffixes, endings) to determine the number of words parts to be collected for segmentation, and eventually to additionally adjust the language specific source code.
-
-## Publications
-
-Jānis Zuters, Gus Strazds, and Kārlis Immers. Semi-automatic Quasi-morphological Word Segmentation for Neural Machine Translation: 13th International Baltic Conference, DB&IS 2018, Trakai, Lithuania, July 1-4, 2018, Proceedings.
 
 ## Acknowledgements
 
 The research has been supported by the European Regional Development Fund within the research project ”Neural Network Modelling for Inflected Natural Languages” No. 1.1.1.1/16/A/215, and the Faculty of Computing, University of Latvia.
 
    [BPE]: <https://github.com/rsennrich/subword-nmt>
-   [learn_prpe.py]: <https://github.com/zuters/prpe/prpe6/learn_prpe.py>
-   [apply_prpe.py]: <https://github.com/zuters/prpe/prpe6/apply_prpe.py>
-   [unprocess_prpe.py]: <https://github.com/zuters/prpe/prpe6/unprocess_prpe.py>
-   [prpe.py]: <https://github.com/zuters/prpe/prpe6/prpe.py>
+   [learn_genseg.py]: <https://github.com/zuters/genseg/learn_genseg.py>
+   [learn_lvseg.py]: <https://github.com/zuters/genseg/learn_lvseg.py>
+   [apply_genseg.py]: <https://github.com/zuters/genseg/apply_genseg.py>
+   [apply_lvseg.py]: <https://github.com/zuters/genseg/apply_lvseg.py>
+   [unprocess_seg.py]: <https://github.com/zuters/genseg/unprocess_seg.py>
