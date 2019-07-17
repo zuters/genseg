@@ -25,7 +25,7 @@ def create_parser():
     parser.add_argument(
         '--split', '-j', type=argparse.FileType('r'),
         metavar='PATH',
-        help="Learned word splitting schemes.")
+        help="Learned segmentation vocabulary.")
     parser.add_argument(
         '--output', '-o', type=argparse.FileType('w'), default=sys.stdout,
         metavar='PATH',

@@ -25,7 +25,7 @@ def create_parser():
     parser.add_argument(
         '--split', '-j', type=argparse.FileType('r'),
         metavar='PATH',
-        help="Learned word splitting schemes.")
+        help="Learned segmentation vocabulary.")
     parser.add_argument(
         '--output', '-o', type=argparse.FileType('w'), default=sys.stdout,
         metavar='PATH',
@@ -39,8 +39,9 @@ def create_parser():
     parser.add_argument(
         '--mode', '-d', type=int, default=1,
         help="Optimization mode of segmentation")
-        # 0 - default
-        # 1 - prefix-special optimization
+        # 0 - prefixes also segmented
+        # 1 - prefix-special optimization (default)
+        # 2 - prefixes not segmented
     return parser
 
 if __name__ == '__main__':
