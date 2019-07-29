@@ -134,6 +134,11 @@ unprocess_prpe.py -i {input text} -o {output text}
   - uppercase marker (marker2)
 
 
+## Publications
+
+Jānis Zuters and Gus Strazds. Subword Segmentation for Machine Translation Based on Grouping Words by Potential Roots.
+To appear.
+
 ## Acknowledgements
 
 The research has been supported by the European Regional Development Fund within the research project ”Neural Network Modelling for Inflected Natural Languages” No. 1.1.1.1/16/A/215, and the Faculty of Computing, University of Latvia.
