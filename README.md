@@ -20,7 +20,7 @@ GENSEG is used in the following way:
 
 ### Phase #1. Learning ([learn_genseg.py], [learn_lvseg.py])
 
-During this phase, segmentation vocabulary {svoc} produced from the {corpus}. Segmentation vocabulary contains information about words how they should be segmented into three parts (generic segmenter): [prefix] root [postfix], or two parts (Latvian segmenter): root [postfix].
+During this phase, segmentation vocabulary {svoc} produced from the {corpus}. Segmentation vocabulary contains information about words how they should be segmented into three parts (Latvian segmenter): {prefix} root {postfix}, or two parts (generic segmenter): root {postfix}.
 
 **Running the generic learning script**:
 
