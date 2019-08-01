@@ -36,6 +36,7 @@ prefixes = {}
 prefixes["pa"] = 1
 prefixes["sa"] = 1
 prefixes["no"] = 1
+prefixes["jā"] = 1
 prefixes["ne"] = 1
 prefixes["ie"] = 1
 prefixes["at"] = 1
@@ -46,7 +47,7 @@ prefixes["ap"] = 1
 prefixes["uz"] = 1
 prefixes["aiz"] = 1
 
-prefixes2 = {} # without 'ne'
+prefixes2 = {} # without 'ne' and 'jā'
 prefixes2["pa"] = 1
 prefixes2["sa"] = 1
 prefixes2["no"] = 1
@@ -62,8 +63,10 @@ prefixes2["aiz"] = 1
 
 prefixes3 = {}
 prefixes3["ne"] = 1
+prefixes3["jā"] = 1
 for p in prefixes2:
     prefixes3["ne"+p] = 1
+    prefixes3["jā"+p] = 1
     prefixes3[p] = 1
     
 
