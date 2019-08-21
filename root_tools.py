@@ -33,33 +33,23 @@ sgstart["spr"] = 1
 sgstart["str"] = 1
 
 prefixes = {}
-prefixes["pa"] = 1
-prefixes["sa"] = 1
-prefixes["no"] = 1
 prefixes["jā"] = 1
 prefixes["ne"] = 1
-prefixes["ie"] = 1
-prefixes["at"] = 1
-prefixes["iz"] = 1
-prefixes["pie"] = 1
-prefixes["pār"] = 1
-prefixes["ap"] = 1
-prefixes["uz"] = 1
-prefixes["aiz"] = 1
 
 prefixes2 = {} # without 'ne' and 'jā'
-prefixes2["pa"] = 1
-prefixes2["sa"] = 1
-prefixes2["no"] = 1
-prefixes2["ie"] = 1
+prefixes2["aiz"] = 1
+prefixes2["ap"] = 1
 prefixes2["at"] = 1
+prefixes2["ie"] = 1
 prefixes2["iz"] = 1
+prefixes2["no"] = 1
+prefixes2["pa"] = 1
+prefixes2["pār"] = 1
 prefixes2["pie"] = 1
 prefixes2["piepa"] = 1
-prefixes2["pār"] = 1
-prefixes2["ap"] = 1
+prefixes2["re"] = 1
+prefixes2["sa"] = 1
 prefixes2["uz"] = 1
-prefixes2["aiz"] = 1
 
 prefixes3 = {}
 prefixes3["ne"] = 1
@@ -68,6 +58,25 @@ for p in prefixes2:
     prefixes3["ne"+p] = 1
     prefixes3["jā"+p] = 1
     prefixes3[p] = 1
+    prefixes[p] = 1
+prefixes3["apakš"] = 1
+prefixes3["ār"] = 1
+prefixes3["augš"] = 1
+prefixes3["bi"] = 1
+prefixes3["caur"] = 1
+prefixes3["iekš"] = 1
+prefixes3["līdz"] = 1
+prefixes3["mini"] = 1
+prefixes3["mono"] = 1
+prefixes3["multi"] = 1
+prefixes3["pēc"] = 1
+prefixes3["poli"] = 1
+prefixes3["pus"] = 1
+prefixes3["priekš"] = 1
+prefixes3["sav"] = 1
+prefixes3["virs"] = 1
+prefixes3["vis"] = 1
+prefixes3["zem"] = 1
     
 
 
