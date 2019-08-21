@@ -12,7 +12,7 @@ import argparse
 from io import open
 argparse.open = open
 
-from lvseg import extract_main_forms_final, analyze_main_forms
+from lvseg import extract_main_forms_final, analyze_main_forms, analyze_main_forms_mf
 
 def create_parser():
     parser = argparse.ArgumentParser(
@@ -31,6 +31,7 @@ def create_parser():
         help="Output mode for analytic output")
         # 0 - default (for segmentation)
         # 1 - segmentation rates (for analysis)
+        # 2 - main form rates (for analysis)
     return parser
 
 if __name__ == '__main__':
@@ -54,4 +55,6 @@ if __name__ == '__main__':
         analyze_main_forms(mforms,mfs2,args.output)
     elif args.mode == 1:
         analyze_main_forms(mforms,mfs2,fspr=args.output)
+    elif args.mode == 2:
+        analyze_main_forms_mf(mforms,mfs2,args.output)
     
