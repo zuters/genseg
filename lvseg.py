@@ -131,7 +131,7 @@ def create_morpho_struct_lv():
 
     s["īgsn"] = [["īgsn"],["RC"]]
     s["īg"] = [["īg"],["RC"]]
-    s["isk"] = [["isk"],["RC"]]
+    s["isk"] = [["isk"],["RC","niec+"]]
     s["en"] = [["en"],["RC"]]
     s["ēj"] = [["ēj"],["RC","īgsn"]]
     s["nēj"] = [["nēj"],["RK"]]
@@ -159,7 +159,7 @@ def create_morpho_struct_lv():
     s["uk1p+"] = [("i","u","iem","us","os"),["uk","niek","ēn+"]]
     s["uks+"] = [[None],["uk1s+","uk1p+"]]
 
-    s["īb+"] = [["īb","ībiņ"],["RC"]]
+    s["īb+"] = [["īb","ībiņ"],["RC","niec+"]]
     s["nīc"] = [["nīc"],["RK"]]
     s["aļ"] = [["aļ"],["RK"]]
     s["av"] = [["av"],["RK"]]
@@ -593,7 +593,6 @@ def extract_main_forms(mforms,mfs2,morpho,mainroots,voc,wholew=True):
                                             add_to_struct_k1(rgspschemes,'R1',spscheme)
                                         elif spscheme[-1] in ["noun1šs","noun1ss","noun1š","noun1šš","noun1s","noun1p"]:
                                             add_to_struct_k1(rgspschemes,'R1',spscheme)
-                                            add_to_struct_k1(rgspschemes,'R3',spscheme)
                                         elif spscheme[1] in ["noun3s","noun3p"]:
                                             add_to_struct_k1(rgspschemes,'R3',spscheme)
                                         elif spscheme[1] in ["noun3fs","noun3fp"]:
@@ -602,26 +601,22 @@ def extract_main_forms(mforms,mfs2,morpho,mainroots,voc,wholew=True):
                                             add_to_struct_k1(rgspschemes,'R4',spscheme)
                                         elif spscheme[-1] in ["noun4ms","noun4fs","noun4s","noun4p",]:
                                             add_to_struct_k1(rgspschemes,'R4',spscheme)
-                                            add_to_struct_k1(rgspschemes,'R6',spscheme)
                                         elif spscheme[-1] in ["noun2se","noun2sx","noun2sy","noun2p","noun2sxx"]:
                                             add_to_struct_k1(rgspschemes,'R2',spscheme)
                                         elif spscheme[-1] in ["noun5s","noun5ms","noun5fs","noun5px","noun5py"]:
                                             add_to_struct_k1(rgspschemes,'R5',spscheme)
+                                        elif spscheme[-1] in ["noun6s","noun6px","noun6py"]:
+                                            add_to_struct_k1(rgspschemes,'R6',spscheme)
                                         elif spscheme[1][:4]=="def1":
                                             add_to_struct_k1(rgspschemes,'A',spscheme)
                                             add_to_struct_k1(rgspschemes,'R1',spscheme)
-                                            add_to_struct_k1(rgspschemes,'R4',spscheme)
                                         elif spscheme[1][:4]=="def4":
                                             add_to_struct_k1(rgspschemes,'A',spscheme)
-                                            add_to_struct_k1(rgspschemes,'R1',spscheme)
                                             add_to_struct_k1(rgspschemes,'R4',spscheme)
                                 if len(rgspschemes)==0:
+#                                    add_to_struct_k1(rgspschemes,'RK',spscheme)
                                     add_to_struct_k1(rgspschemes,'R1',spscheme)
-                                    add_to_struct_k1(rgspschemes,'R2',spscheme)
-                                    add_to_struct_k1(rgspschemes,'R3',spscheme)
                                     add_to_struct_k1(rgspschemes,'R4',spscheme)
-                                    add_to_struct_k1(rgspschemes,'R5',spscheme)
-                                    add_to_struct_k1(rgspschemes,'R6',spscheme)
                             elif roottype=="R10":
                                 for spscheme in splitschemes:
                                     add_to_struct_k1(rgspschemes,'R1',spscheme)
@@ -638,7 +633,7 @@ def extract_main_forms(mforms,mfs2,morpho,mainroots,voc,wholew=True):
                                 for spscheme in splitschemes:
                                     add_to_struct_k1(rgspschemes,'R7',spscheme)
                             else:
-                                print('No such roottype',roottype)
+                                print('No such roottype',roottype,mainroot,word)
                                 for spscheme in splitschemes:
                                     add_to_struct_k1(rgspschemes,'RK',spscheme)
                         else: # verb
@@ -707,6 +702,8 @@ def analyze_main_forms_1(mforms):
                                 wr0 = 1.0
                         elif mf[2]=='NUM': # numerals
                             wr0 = 1.0
+                        elif mf[2]=='RK': # general nouns
+                            wr0 = 0.5
                         else:
                             print("No such root-group",mf[2])
                         wordrate = max(wordrate,wr0)
@@ -721,25 +718,29 @@ def analyze_main_forms_2(mforms,mfs2):
             mfs2[word][0][0] = max(mfs2[word][0][0],mfs2[word][1][mf][0][0])
             
 def process_spword(spscheme0,spw):
+    # apkalpo => apkalp-o
+    if (len(spscheme0)>=2 and spscheme0[1]=='present-c2-p23-base'
+        and is_good_part_generic(spw[0][:-1])):
+        spw = (spw[0][:-1],spw[0][-1:]) + spw[2:]
     # mācī-ja => māc-īja
-    if (spscheme0[0][-2:]=='OJ'
+    elif ((spscheme0[0][-2:]=='OJ' or spscheme0[0][-7:]=='OJAMIES')
         and is_good_part_generic(spw[0][:-2])
         and len(spscheme0)>=2 and spscheme0[1]!='PREF'):
         spw = (spw[0][:-2],spw[0][-2:]+spw[1]) + spw[2:]
     # mācī-t => māc-īt
     elif (spscheme0[0] in ["RPASSPAST-C2","RPASSPAST-C3","RINF-C2","RINF-C3","RFUTA","RFUTAS","RŠANA","RDAMA"]
           and is_good_part_generic(spw[0][:-1])
-          and spw[0][-2:] not in ["ie","au"]
+          and spw[0][-2:] not in ["ie","au"] # root not ends with...
           and len(spscheme0)>=2 and spscheme0[1]!='PREF'):
         spw = (spw[0][:-1],spw[0][-1:]+spw[1]) + spw[2:]
     rpos = 0
-    if spscheme0[-1]=='PREF':
+    if spscheme0[-1]=='PREF': # move prefix from end to beginning
         spw = ('@'+spw[-1],)+spw[:-1]
         rpos=1
-    if len(spw)>rpos+1:
+    if len(spw)>rpos+1: # merge everything after root
         spw = spw[:rpos+1] + (''.join(spw[rpos+1:]),)
     
-    return spw
+    return spw,spw[rpos]
 
 def analyze_spwords_1(mfs2):
     sprates = {}
@@ -749,7 +750,7 @@ def analyze_spwords_1(mfs2):
         for mf in mfs2[word][1]:
             for spword in mfs2[word][1][mf][1]:
                 spscheme0 = mfs2[word][1][mf][1][spword][0]
-                spw2 = process_spword(spscheme0,spword)
+                spw2,root = process_spword(spscheme0,spword)
                 mfrate = mfs2[word][1][mf][0][0] + 0.01*len(spw2[-1])
                 if spw2 not in sprates[word]:
                     sprates[word][spw2] = 0.0
@@ -757,6 +758,59 @@ def analyze_spwords_1(mfs2):
                     sprates[word][spw2] = mfrate
                 break
     return sprates
+
+def analyze_spwords_1rmf(mfs2):
+    formroots0 = {}
+    for word in mfs2:
+        for mf in mfs2[word][1]:
+            for spword in mfs2[word][1][mf][1]:
+                spscheme0 = mfs2[word][1][mf][1][spword][0]
+                spw2,root = process_spword(spscheme0,spword)
+                if mf not in formroots0:
+                    formroots0[mf] = {}
+                formroots0[mf][root] = 1
+    formroots = {}
+    for mf in formroots0:
+        if len(formroots0[mf])>1:
+            for root1 in formroots0[mf]:
+                for root2 in formroots0[mf]:
+                    if root1!=root2:
+                        if root1 not in formroots:
+                            formroots[root1] = {}
+                        if root2 not in formroots:
+                            formroots[root2] = {}
+                        formroots[root1][root2] = 1
+                        formroots[root2][root1] = 1
+    return formroots
+
+def analyze_spwords_1rmfplus(mfs2):
+    formroots = {}
+    for word in mfs2:
+        for mf in mfs2[word][1]:
+            if len(mfs2[word][1][mf][1])>1:
+                for spword in mfs2[word][1][mf][1]:
+                    spscheme0 = mfs2[word][1][mf][1][spword][0]
+                    spw2,root = process_spword(spscheme0,spword)
+                    if mf not in formroots:
+                        formroots[mf] = {}
+#                    formroots[mf][root+"/"+word+"/"+".".join(spscheme0)] = 1
+                    formroots[mf][root] = 1
+    return formroots
+
+def analyze_spwords_1mf(mfs2):
+    spratesmf = {}
+    for word in mfs2:
+        if word not in spratesmf:
+            spratesmf[word] = {}
+        for mf in mfs2[word][1]:
+            for spword in mfs2[word][1][mf][1]:
+                mfrate = mfs2[word][1][mf][0][0]
+                if mf not in spratesmf[word]:
+                    spratesmf[word][mf] = 0.0
+                if mfrate>spratesmf[word][mf]:
+                    spratesmf[word][mf] = mfrate
+                break
+    return spratesmf
 
 def analyze_spwords_2(sprates):
     sps2 = {}
@@ -853,30 +907,40 @@ def load_main_forms(fin,reverse=False):
         fin.close()
     return repo
 
-def save_sprates_entry(entry,fout,tech=False):
+def save_sprates_entry(entry,fout,tech=False,mode=0):
     for e2all in sorted(entry.items(), key=lambda x: x[1], reverse=True):
         e2 = e2all[0]
-        if tech:
+        if mode==1:
+            fout.write("  ** {}\n".format(e2))
+        elif tech:
             fout.write("  ** {} {}\n".format(" ".join(e2).rstrip(),entry[e2]))
         else:
             fout.write("  ** {} <{:.2f}>\n".format(e2,entry[e2]))
 
-def save_sprates(repo,fout,tech=False):
+def save_sprates(repo,fout,tech=False,mode=0):
     lopen = False
     if isinstance(fout,str): 
         fout = codecs.open(fout, 'w', encoding='utf-8')
         lopen = True
     for e1 in sorted(repo):
-        fout.write("* {} ".format(e1))
+        if mode==1:
+            if isinstance(e1,str):
+                fout.write("{} ".format(e1))
+            else:
+                fout.write("{} ".format(" ".join(e1)))
+        else:
+            fout.write("* {} ".format(e1))
         mval = 0.0
         for e2 in repo[e1]:
             if repo[e1][e2]>mval:
                 mval = repo[e1][e2]
-        if tech:
+        if mode==1:
+            fout.write("\n")
+        elif tech:
             fout.write("{}\n".format(mval))
         else:
             fout.write("[{:.2f}]\n".format(mval))
-        save_sprates_entry(repo[e1],fout,tech)
+        save_sprates_entry(repo[e1],fout,tech,mode)
 #        for e2all in sorted(repo[e1].items(), key=lambda x: x[1], reverse=True):
 #            e2 = e2all[0]
 #            if tech:
@@ -983,6 +1047,30 @@ def analyze_main_forms(mforms,mfs2,fspw="",mstr="",fspr=""):
         save_sprates(sprates,fspr,True)
     return spwords
 
+def analyze_main_forms_mf(mforms,mfs2,fspr=""):
+    analyze_main_forms_1(mforms)
+    analyze_main_forms_2(mforms,mfs2)
+    spratesmf = analyze_spwords_1mf(mfs2)
+    if isinstance(fspr,str)==False or fspr!="":
+        save_sprates(spratesmf,fspr,True)
+    return spratesmf
+
+def analyze_main_forms_rmf(mforms,mfs2,fspr=""):
+    analyze_main_forms_1(mforms)
+    analyze_main_forms_2(mforms,mfs2)
+    spratesmf = analyze_spwords_1rmf(mfs2)
+    if isinstance(fspr,str)==False or fspr!="":
+        save_sprates(spratesmf,fspr,mode=1)
+    return spratesmf
+
+def analyze_main_forms_rmfplus(mforms,mfs2,fspr=""):
+    analyze_main_forms_1(mforms)
+    analyze_main_forms_2(mforms,mfs2)
+    spratesmf = analyze_spwords_1rmfplus(mfs2)
+    if isinstance(fspr,str)==False or fspr!="":
+        save_sprates(spratesmf,fspr,mode=1)
+    return spratesmf
+
 def load_learned_and_analyze_main_forms(mstr,corpus,fspw=""):
     mforms,mfs2=load_learned_and_extract_main_forms(mstr,corpus)
     spwords = analyze_main_forms(mforms,mfs2,fspw=fspw)
@@ -1038,13 +1126,14 @@ def segment_word(spwords,word,marker1,marker2,prefspecial=0,generic=False):
         else:
             spw = [lword]
     return spw
-def segment_line(spwords,sentence,marker1,marker2,prefspecial=False,generic=False):
+
+def segment_line(spwords,sentence,marker1,marker2,prefspecial=0,generic=False):
     sseg = []
     for word in sentence.split():
         sseg += segment_word(spwords,word,marker1,marker2,prefspecial,generic)
     return " ".join(sseg)
 
-def segment_document(fin,fout,spwords,marker1,marker2,prefspecial=False,generic=False):
+def segment_document(fin,fout,spwords,marker1,marker2,prefspecial=0,generic=False):
     if marker1.isdigit(): marker1 = chr(int(marker1))
     if marker2.isdigit(): marker2 = chr(int(marker2))
     lopenin = False
