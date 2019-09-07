@@ -40,55 +40,55 @@ learn_lvseg.py -i {corpus} -o {svoc}
   - several parameters for the generic learning script: rootextent, minroot, maxroot, rootlencoef, maxprefix, prerate, maxpostfix, postrate, prepenalty (described in [learn_genseg.py]).
 
 Just for a brief insight 1, small excerpt of English segmentation vocabulary (in file {svoc}):
-abducted abduct ed
-abductee abduct ee
-abductees abduct ees
-abducting abduct ing
-abduction abduct ion
-abductions abduct ions
-abductor abduct or
-abductors abduct ors
-abilities abilit ies
-ability abilit y
+  - abducted abduct ed
+  - abductee abduct ee
+  - abductees abduct ees
+  - abducting abduct ing
+  - abduction abduct ion
+  - abductions abduct ions
+  - abductor abduct or
+  - abductors abduct ors
+  - abilities abilit ies
+  - ability abilit y
 
 Just for a brief insight 2, small excerpt of Latvian segmentation vocabulary (in file {svoc}), '@' indicates prefix:
-pats pat s
-patur @pa tur
-paturot @pa tur ot
-paturēt @pa tur ēt
-patvērumu patvērumu
-patānī patānī
-patēriņa @pa tēr iņa
-patēriņu @pa tēr iņu
-patērētiem @pa tēr ētiem
-patērētāji @pa tēr ētāji
-patīk patīk
-patīkamas patīkam as
-patīkami patīkam i
+  - pats pat s
+  - patur @pa tur
+  - paturot @pa tur ot
+  - paturēt @pa tur ēt
+  - patvērumu patvērumu
+  - patānī patānī
+  - patēriņa @pa tēr iņa
+  - patēriņu @pa tēr iņu
+  - patērētiem @pa tēr ētiem
+  - patērētāji @pa tēr ētāji
+  - patīk patīk
+  - patīkamas patīkam as
+  - patīkami patīkam i
 
 Just for a brief insight 3, small excerpt of Russian segmentation vocabulary (in file {svoc}):
-канцерогенные канцероген ные
-канцерогенных канцероген ных
-канцерогенов канцероген ов
-канцлер канцлер
-канцлера канцлер а
-канцлере канцлер е
-канцлеров канцлер ов
-канцлером канцлер ом
+  - канцерогенные канцероген ные
+  - канцерогенных канцероген ных
+  - канцерогенов канцероген ов
+  - канцлер канцлер
+  - канцлера канцлер а
+  - канцлере канцлер е
+  - канцлеров канцлер ов
+  - канцлером канцлер ом
 
 Just for a brief insight 4, small excerpt of German segmentation vocabulary (in file {svoc}):
-logistisch logistisch
-logistische logistisch e
-logistischen logistisch en
-logistischer logistisch er
-logistisches logistisch es
-lokalisieren lokalisier en
-lokalisiert lokalisier t
-lokalisierte lokalisier te
-lokalisierten lokalisier ten
-lokalisierter lokalisier ter
-lokalisiertes lokalisier tes
-lokalisierung lokalisier ung
+  - logistisch logistisch
+  - logistische logistisch e
+  - logistischen logistisch en
+  - logistischer logistisch er
+  - logistisches logistisch es
+  - lokalisieren lokalisier en
+  - lokalisiert lokalisier t
+  - lokalisierte lokalisier te
+  - lokalisierten lokalisier ten
+  - lokalisierter lokalisier ter
+  - lokalisiertes lokalisier tes
+  - lokalisierung lokalisier ung
 
 
 ### 2. Segmentation ([apply_genseg.py], [apply_lvseg.py])
@@ -125,7 +125,7 @@ if segmentation mark is '@', uppercase mark is '$', and word 'accounting' is seg
 During this operation, a segmented text is converted back to a normal text:
 
 ```sh
-unprocess_prpe.py -i {input text} -o {output text}
+unprocess_genseg.py -i {input text} -o {output text}
 ```
 
 **Additional optional parameters for removing segmentation (only if specified in the segmentation phase)**:
