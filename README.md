@@ -136,8 +136,7 @@ unprocess_genseg.py -i {input text} -o {output text}
 
 ## Publications
 
-Jānis Zuters and Gus Strazds. Subword Segmentation for Machine Translation Based on Grouping Words by Potential Roots.
-To appear.
+Jānis Zuters, Guntis Strazds. Subword Segmentation for Machine Translation Based on Grouping Words by Potential Roots. Baltic Journal of Modern Computing Vol.7, N4 (2019), p.500-509. https://doi.org/10.22364/bjmc.2019.7.4.04
 
 ## Acknowledgements
 
